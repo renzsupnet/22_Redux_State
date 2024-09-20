@@ -34,6 +34,7 @@ function Detail() {
         image: product.image,
         name: product.name,
         _id: product._id,
+        description: product.description,
         price: product.price,
         quantity: product.quantity,
       };
@@ -92,6 +93,7 @@ function Detail() {
     idbPromise('cart', 'delete', { ...currentProduct });
   };
 
+  console.log(currentProduct);
   return (
     <>
       {currentProduct && cart ? (
