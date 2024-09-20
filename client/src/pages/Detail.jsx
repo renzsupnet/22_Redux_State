@@ -15,7 +15,7 @@ import { idbPromise } from '../utils/helpers';
 import spinner from '../assets/spinner.gif';
 
 function Detail() {
-  const state = useSelector();
+  const state = useSelector(state => state)
   const dispatch = useDispatch();
   const { id } = useParams();
 
