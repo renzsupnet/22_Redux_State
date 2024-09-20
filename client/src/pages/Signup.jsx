@@ -1,28 +1,33 @@
-import React from 'react';
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
 import { useMutation } from '@apollo/client';
-import { setUser } from '../redux/actions/userActions';
-import { ADD_USER } from '../utils/mutations';
 import Auth from '../utils/auth';
+import { ADD_USER } from '../utils/mutations';
 
-function Signup() {
-  const dispatch = useDispatch();
+function Signup(props) {
+  const [formState, setFormState] = useState({ email: '', password: '' });
   const [addUser] = useMutation(ADD_USER);
 
   const handleFormSubmit = async (event) => {
     event.preventDefault();
-    const formData = new FormData(event.target);
-    const userData = Object.fromEntries(formData.entries());
+    const mutationResponse = await addUser({
+      variables: {
+        email: formState.email,
+        password: formState.password,
+        firstName: formState.firstName,
+        lastName: formState.lastName,
+      },
+    });
+    const token = mutationResponse.data.addUser.token;
+    Auth.login(token);
+  };
 
-    try {
-      const { data } = await addUser({ variables: userData });
-      const token = data.addUser.token;
-      Auth.login(token);
-      dispatch(setUser(data.addUser.user));
-    } catch (error) {
-      console.error('Signup error:', error);
-    }
+  const handleChange = (event) => {
+    const { name, value } = event.target;
+    setFormState({
+      ...formState,
+      [name]: value,
+    });
   };
 
   return (
@@ -36,9 +41,9 @@ function Signup() {
           <input
             placeholder="First"
             name="firstName"
-            type="text"
+            type="firstName"
             id="firstName"
-            required
+            onChange={handleChange}
           />
         </div>
         <div className="flex-row space-between my-2">
@@ -46,9 +51,9 @@ function Signup() {
           <input
             placeholder="Last"
             name="lastName"
-            type="text"
+            type="lastName"
             id="lastName"
-            required
+            onChange={handleChange}
           />
         </div>
         <div className="flex-row space-between my-2">
@@ -58,17 +63,17 @@ function Signup() {
             name="email"
             type="email"
             id="email"
-            required
+            onChange={handleChange}
           />
         </div>
         <div className="flex-row space-between my-2">
-          <label htmlFor="password">Password:</label>
+          <label htmlFor="pwd">Password:</label>
           <input
             placeholder="******"
             name="password"
             type="password"
-            id="password"
-            required
+            id="pwd"
+            onChange={handleChange}
           />
         </div>
         <div className="flex-row flex-end">

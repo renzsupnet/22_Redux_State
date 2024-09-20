@@ -1,11 +1,6 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import { Provider } from 'react-redux';
+import ReactDOM from 'react-dom/client'
+import './index.css'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
-import { ApolloClient, InMemoryCache, ApolloProvider, createHttpLink } from '@apollo/client';
-import { setContext } from '@apollo/client/link/context';
-import store from './redux/store';
-import './index.css';
 
 import App from './App.jsx';
 import Home from './pages/Home';
@@ -16,30 +11,11 @@ import Signup from './pages/Signup';
 import Success from './pages/Success';
 import OrderHistory from './pages/OrderHistory';
 
-const httpLink = createHttpLink({
-  uri: '/graphql',
-});
-
-const authLink = setContext((_, { headers }) => {
-  const token = localStorage.getItem('id_token');
-  return {
-    headers: {
-      ...headers,
-      authorization: token ? `Bearer ${token}` : '',
-    },
-  };
-});
-
-const client = new ApolloClient({
-  link: authLink.concat(httpLink),
-  cache: new InMemoryCache(),
-});
-
 const router = createBrowserRouter([
   {
     path: '/',
     element: <App />,
-    errorElement: <NoMatch />,
+    error: <NoMatch />,
     children: [
       {
         index: true, 
@@ -65,11 +41,5 @@ const router = createBrowserRouter([
 ]);
 
 ReactDOM.createRoot(document.getElementById('root')).render(
-  <React.StrictMode>
-    <ApolloProvider client={client}>
-      <Provider store={store}>
-        <RouterProvider router={router} />
-      </Provider>
-    </ApolloProvider>
-  </React.StrictMode>
-);
+  <RouterProvider router={router} />
+)
