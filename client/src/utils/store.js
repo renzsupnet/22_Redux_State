@@ -1,4 +1,5 @@
+javascript
 import { createStore } from 'redux';
 import reducers from './reducers';
 
-export default createStore( reducers );
+export const store = createStore(reducers);
